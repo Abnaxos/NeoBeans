@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
-      <version>10.0</version>
+      <version>10.5</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -42,5 +42,13 @@
       <version>1.6.1</version>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>maven.raffael.ch</id>
+      <name>maven.raffael.ch</name>
+      <url>http://maven.raffael.ch</url>
+    </repository>
+  </repositories>
 
 </project>
