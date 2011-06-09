@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import com.google.common.annotations.GwtCompatible;
 import org.jetbrains.annotations.NotNull;
-import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.Node;
 
 
 /**
@@ -27,11 +27,11 @@ public class NodeKey implements Serializable {
         this.id = id;
     }
 
-    public static NodeKey newKey(long neoId, @NotNull String id) {
+    public static NodeKey arbitrary(long neoId, @NotNull String id) {
         return new NodeKey(neoId, id);
     }
 
-    public static NodeKey from(Relationship node) {
+    public static NodeKey from(Node node) {
         return new NodeKey(node.getId(), (String)node.getProperty(PROPERTY_ID));
     }
 
@@ -48,10 +48,10 @@ public class NodeKey implements Serializable {
             return false;
         }
         NodeKey that = (NodeKey)o;
-        if ( neoId != that.neoId ) {
+        if ( !id.equals(that.id) ) {
             return false;
         }
-        if ( !id.equals(that.id) ) {
+        if ( neoId != null ? !neoId.equals(that.neoId) : that.neoId != null ) {
             return false;
         }
         return true;
@@ -59,7 +59,7 @@ public class NodeKey implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = (int)(neoId ^ (neoId >>> 32));
+        int result = neoId != null ? neoId.hashCode() : 0;
         result = 31 * result + id.hashCode();
         return result;
     }

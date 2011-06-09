@@ -28,15 +28,15 @@ public class RelationshipKey implements Serializable {
         this.endKey = endKey;
     }
 
-    public static NodeKey newKey(NodeKey startKey, NodeKey endKey) {
+    public static NodeKey arbitrary(@NotNull NodeKey startKey, @NotNull NodeKey endKey) {
         return notImplemented();
     }
 
-    public static NodeKey from(Node startNode, Node endNode) {
+    public static NodeKey from(@NotNull Node startNode, @NotNull Node endNode) {
         return notImplemented();
     }
 
-    public static NodeKey from(Relationship relationship) {
+    public static NodeKey from(@NotNull Relationship relationship) {
         return notImplemented();
     }
 

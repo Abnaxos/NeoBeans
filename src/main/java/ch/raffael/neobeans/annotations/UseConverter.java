@@ -10,6 +10,8 @@ import ch.raffael.neobeans.Converter;
 
 
 /**
+ * Declare a converter to convert values to/from Neo4j values.
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Target(ElementType.METHOD)

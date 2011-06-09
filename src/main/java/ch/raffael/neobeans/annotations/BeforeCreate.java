@@ -8,15 +8,15 @@ import java.lang.annotation.Target;
 
 
 /**
+ * Declares a method to be called before creating a NeoBean in the bean store. Methods
+ * annotated with this will be called <em>before</em> any methods annotated with
+ * {@link BeforeUpdate @BeforeUpdate(onCreate=true)}.
+ *
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Index {
-
-    boolean fulltext() default false;
-    String name() default "";
-    String key() default "";
+public @interface BeforeCreate {
 
 }
