@@ -142,6 +142,39 @@ public class TestBeanPropertyMapping extends Neo4jTest {
         }
     }
 
+    @Test
+    public void testSetFromNullToNull() throws Exception {
+        BeanPropertyMapping mapping = new BeanPropertyMapping(beanStore.database(), "name", null, null,
+                                                              TestBean.class.getMethod("getName"),
+                                                              TestBean.class.getMethod("setName", String.class));
+        TestBean bean = new TestBean();
+        assertNull(bean.getName());
+        Transaction tx = beginTx();
+        Node node;
+        try {
+            node = beanStore.database().createNode();
+            mapping.beanToEntity(node, bean);
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+        tx = beginTx();
+        try {
+            try {
+                node.getProperty("name");
+                fail("Expected not found exception");
+            }
+            catch ( NotFoundException e ) {
+                // expected
+            }
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+    }
+
     public static class TestBean {
 
         private String name;
