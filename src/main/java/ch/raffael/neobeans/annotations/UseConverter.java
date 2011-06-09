@@ -1,10 +1,12 @@
-package ch.raffael.neobeans;
+package ch.raffael.neobeans.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import ch.raffael.neobeans.Converter;
 
 
 /**
@@ -13,9 +15,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Index {
+public @interface UseConverter {
 
-    boolean fullText() default false;
-    String name() default "";
+    Class<? extends Converter> value();
 
 }

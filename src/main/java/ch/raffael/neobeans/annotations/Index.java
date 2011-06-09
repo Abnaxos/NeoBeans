@@ -1,4 +1,4 @@
-package ch.raffael.neobeans;
+package ch.raffael.neobeans.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,11 +10,13 @@ import java.lang.annotation.Target;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface RootRelationship {
+public @interface Index {
 
-    Class<?> value();
+    boolean fullText() default false;
+    String name() default "";
+    String key() default "";
 
 }

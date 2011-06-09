@@ -1,6 +1,9 @@
 package ch.raffael.neobeans;
 
-import static ch.raffael.util.common.NotImplementedException.*;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -8,27 +11,59 @@ import static ch.raffael.util.common.NotImplementedException.*;
  */
 public class Update {
 
+    private final List<Operation> operations = new LinkedList<Operation>();
+
     public Update() {
     }
 
+    @NotNull
     public static Update update() {
-        return notImplemented();
+        return new Update();
     }
 
-    public Update store(Object neoBean) {
-        return notImplemented();
+    @NotNull
+    public Update store(@NotNull Object neoBean) {
+        return store(neoBean, false);
     }
 
-    public Update store(Object neoBean, boolean ignoreMissing) {
-        return notImplemented();
+    @NotNull
+    public Update store(@NotNull Object neoBean, boolean ignoreMissing) {
+        operations.add(new Operation(OperationType.STORE, neoBean, ignoreMissing));
+        return this;
     }
 
-    public Update delete(Object neoBean) {
-        return notImplemented();
+    @NotNull
+    public Update delete(@NotNull Object neoBean) {
+        operations.add(new Operation(OperationType.DELETE, neoBean, true));
+        return this;
     }
 
-    public void perform(NeoBeanStore store) {
-        notImplemented();
+    public void perform(@NotNull NeoBeanStore store) {
+        store.performUpdate(this);
+    }
+
+    public static final class Operation {
+        private final OperationType type;
+        private final Object neoBean;
+        private final boolean ignoreMissing;
+        private Operation(@NotNull OperationType type, @NotNull Object neoBean, boolean ignoreMissing) {
+            this.type = type;
+            this.neoBean = neoBean;
+            this.ignoreMissing = ignoreMissing;
+        }
+        public OperationType getType() {
+            return type;
+        }
+        public Object getNeoBean() {
+            return neoBean;
+        }
+        public boolean isIgnoreMissing() {
+            return ignoreMissing;
+        }
+    }
+
+    public static enum OperationType {
+        STORE, DELETE
     }
 
 }
