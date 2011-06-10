@@ -3,7 +3,7 @@ package ch.raffael.neobeans;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public class ConvertException extends NeoBeansException {
+public class ConvertException extends BeanStoreException {
 
     public ConvertException(Object value) {
         super(message(value, null, null));

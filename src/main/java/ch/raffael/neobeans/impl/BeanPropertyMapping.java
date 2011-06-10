@@ -6,8 +6,8 @@ import java.lang.reflect.Method;
 import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
 
+import ch.raffael.neobeans.BeanStoreException;
 import ch.raffael.neobeans.Converter;
-import ch.raffael.neobeans.NeoBeansException;
 
 
 /**
@@ -30,10 +30,10 @@ public class BeanPropertyMapping extends AbstractPropertyMapping {
             return readMethod.invoke(bean);
         }
         catch ( IllegalAccessException e ) {
-            throw new NeoBeansException("Error reading value from " + bean, e);
+            throw new BeanStoreException("Error reading value from " + bean, e);
         }
         catch ( InvocationTargetException e ) {
-            throw new NeoBeansException("Error reading value from " + bean, e);
+            throw new BeanStoreException("Error reading value from " + bean, e);
         }
     }
 
@@ -43,10 +43,10 @@ public class BeanPropertyMapping extends AbstractPropertyMapping {
             writeMethod.invoke(bean, value);
         }
         catch ( IllegalAccessException e ) {
-            throw new NeoBeansException("Error reading value from " + bean, e);
+            throw new BeanStoreException("Error reading value from " + bean, e);
         }
         catch ( InvocationTargetException e ) {
-            throw new NeoBeansException("Error reading value from " + bean, e);
+            throw new BeanStoreException("Error reading value from " + bean, e);
         }
     }
 }

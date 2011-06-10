@@ -17,29 +17,38 @@ import static ch.raffael.util.common.NotImplementedException.*;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public class AnnotatedBeanStorageDelegateFactory implements StorageDelegateFactory {
+public class AnnotatedBeanMappingFactory implements BeanMappingFactory {
+
+    public AnnotatedBeanMappingFactory() {
+    }
 
     @NotNull
     @Override
-    public StorageDelegate createStorageDelegate(@NotNull Class<?> beanClass) {
+    public Object mappingKey(@NotNull Object bean) {
+        return bean.getClass();
+    }
+
+    @NotNull
+    @Override
+    public BeanMapping createBeanMapping(@NotNull Object bean) {
         BeanInfo beanInfo = null;
         try {
-            beanInfo = Introspector.getBeanInfo(beanClass);
+            beanInfo = Introspector.getBeanInfo(bean.getClass());
         }
         catch ( IntrospectionException e ) {
-            throw new InvalidBeanException(beanClass, "Error during bean introspection", e);
+            throw new InvalidBeanException(bean.getClass(), "Error during bean introspection", e);
         }
         PropertyDescriptor keyProperty = null;
         for ( PropertyDescriptor prop : beanInfo.getPropertyDescriptors() ) {
             if ( prop.getPropertyType().equals(NodeKey.class) || prop.getPropertyType().equals(RelationshipKey.class) ) {
                 if ( keyProperty != null ) {
-                    throw new InvalidBeanException(beanClass, "Found more than one key property: " + keyProperty.getName() + ", " + prop.getName());
+                    throw new InvalidBeanException(bean.getClass(), "Found more than one key property: " + keyProperty.getName() + ", " + prop.getName());
                 }
                 keyProperty = prop;
             }
         }
         if ( keyProperty == null ) {
-            throw new InvalidBeanException(beanClass, "Missing key property");
+            throw new InvalidBeanException(bean.getClass(), "Missing key property");
         }
         // FIXME: create delegate
         return notImplemented();

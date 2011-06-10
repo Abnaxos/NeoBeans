@@ -6,9 +6,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public interface StorageDelegateFactory {
+public interface BeanMappingFactory {
 
     @NotNull
-    StorageDelegate createStorageDelegate(@NotNull Class<?> beanClass);
+    Object mappingKey(@NotNull Object bean);
+
+    @NotNull
+    BeanMapping createBeanMapping(@NotNull Object bean);
 
 }

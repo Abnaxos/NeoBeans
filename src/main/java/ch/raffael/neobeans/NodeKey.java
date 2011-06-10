@@ -14,17 +14,15 @@ import org.neo4j.graphdb.Node;
 @GwtCompatible
 public class NodeKey implements Serializable {
 
-    public static final String PROPERTY_ID = "neobeans:id";
-
-    private Long neoId;
-    private String id;
+    private Long id;
+    private String key;
 
     private NodeKey() {
     }
 
-    private NodeKey(Long neoId, @NotNull String id) {
-        this.neoId = neoId;
+    private NodeKey(Long id, @NotNull String key) {
         this.id = id;
+        this.key = key;
     }
 
     public static NodeKey arbitrary(long neoId, @NotNull String id) {
@@ -32,7 +30,7 @@ public class NodeKey implements Serializable {
     }
 
     public static NodeKey from(Node node) {
-        return new NodeKey(node.getId(), (String)node.getProperty(PROPERTY_ID));
+        return new NodeKey(node.getId(), (String)node.getProperty(NeoBeanStore.PROPERTY_KEY));
     }
 
     public static NodeKey create() {
@@ -48,10 +46,10 @@ public class NodeKey implements Serializable {
             return false;
         }
         NodeKey that = (NodeKey)o;
-        if ( !id.equals(that.id) ) {
+        if ( !key.equals(that.key) ) {
             return false;
         }
-        if ( neoId != null ? !neoId.equals(that.neoId) : that.neoId != null ) {
+        if ( id != null ? !id.equals(that.id) : that.id != null ) {
             return false;
         }
         return true;
@@ -59,27 +57,27 @@ public class NodeKey implements Serializable {
 
     @Override
     public int hashCode() {
-        int result = neoId != null ? neoId.hashCode() : 0;
-        result = 31 * result + id.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + key.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "NodeKey{" + neoId + "," + id + "}";
+        return "NodeKey{" + id + "," + key + "}";
     }
 
     public static String newId() {
         return UUID.randomUUID().toString();
     }
 
-    public long getNeoId() {
-        return neoId;
+    public Long getId() {
+        return id;
     }
 
     @NotNull
-    public String getId() {
-        return id;
+    public String getKey() {
+        return key;
     }
 
 }

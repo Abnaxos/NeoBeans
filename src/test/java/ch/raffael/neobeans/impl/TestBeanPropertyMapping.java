@@ -1,6 +1,5 @@
 package ch.raffael.neobeans.impl;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.testng.annotations.*;
@@ -8,9 +7,6 @@ import org.testng.annotations.*;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.NotFoundException;
 import org.neo4j.graphdb.Transaction;
-
-import ch.raffael.neobeans.ConvertException;
-import ch.raffael.neobeans.Converter;
 
 import static org.testng.Assert.*;
 
@@ -76,22 +72,7 @@ public class TestBeanPropertyMapping extends Neo4jTest {
     @Test
     public void testConverter() throws Exception {
         BeanPropertyMapping mapping = new BeanPropertyMapping(beanStore.database(), "homepage",
-                                                              new Converter() {
-                                                                  @Override
-                                                                  public Object fromNeo4j(Object value) {
-                                                                      try {
-                                                                          return new URL((String)value);
-                                                                      }
-                                                                      catch ( MalformedURLException e ) {
-                                                                          throw new ConvertException(value, e);
-                                                                      }
-                                                                  }
-                                                                  @Override
-                                                                  public Object toNeo4j(Object value) {
-                                                                      return value.toString();
-                                                                  }
-                                                              },
-                                                              null,
+                                                              TestBean.URL_CONVERTER, null,
                                                               TestBean.class.getMethod("getHomepage"),
                                                               TestBean.class.getMethod("setHomepage", URL.class));
         TestBean bean = new TestBean();
@@ -172,28 +153,6 @@ public class TestBeanPropertyMapping extends Neo4jTest {
         }
         finally {
             tx.finish();
-        }
-    }
-
-    public static class TestBean {
-
-        private String name;
-        private URL homepage;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public URL getHomepage() {
-            return homepage;
-        }
-
-        public void setHomepage(URL homepage) {
-            this.homepage = homepage;
         }
     }
 

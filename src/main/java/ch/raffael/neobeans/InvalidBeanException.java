@@ -3,7 +3,7 @@ package ch.raffael.neobeans;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public class InvalidBeanException extends NeoBeansException {
+public class InvalidBeanException extends BeanStoreException {
 
     private final Class<?> beanClass;
 

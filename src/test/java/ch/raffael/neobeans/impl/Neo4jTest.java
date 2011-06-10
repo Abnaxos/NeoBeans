@@ -25,7 +25,7 @@ public class Neo4jTest {
         beanStore = new DefaultNeoBeanStore(new EmbeddedGraphDatabase(dbDirectory.toString()));
     }
 
-    @AfterSuite
+    @AfterSuite(alwaysRun = true)
     public void deleteTestDatabase() {
         if ( beanStore != null ) {
             try {

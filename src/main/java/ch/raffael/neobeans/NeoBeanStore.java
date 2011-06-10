@@ -2,6 +2,7 @@ package ch.raffael.neobeans;
 
 import javax.annotation.PreDestroy;
 
+import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 
@@ -11,6 +12,9 @@ import org.neo4j.graphdb.Transaction;
  */
 public interface NeoBeanStore {
 
+    String PROPERTY_TYPE = "neobeans:type";
+    String PROPERTY_KEY = "neobeans:key";
+
     GraphDatabaseService database();
 
     Transaction beginTx();
@@ -18,5 +22,12 @@ public interface NeoBeanStore {
     @PreDestroy
     void shutdown();
 
-    void performUpdate(Update update);
+    void store(@NotNull Object bean);
+
+    void store(@NotNull Object bean, boolean ignoreMissing);
+
+    void delete(@NotNull Object bean);
+
+    void performUpdate(@NotNull Update update);
+
 }
