@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    This pom lists all OSGi bundle dependencies that are needed to start NeoBeans
+    in OSGi container. To do so, execute
+
+        mvn pax:provision -f src/test/resources/provision.pom.xml
+
+    (from the project root).
+  -->
+
+  <groupId>ch.raffael.neobeans</groupId>
+  <version>1.0-SNAPSHOT</version>
+  <artifactId>neobeans-provision</artifactId>
+  <description>
+    Dependencies for provisioning.
+  </description>
+
+  <packaging>pom</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.ops4j</groupId>
+        <artifactId>maven-pax-plugin</artifactId>
+        <version>1.4</version>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.neo4j</groupId>
+      <artifactId>neo4j-kernel</artifactId>
+      <version>1.3</version>
+    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.neo4j</groupId>-->
+      <!--<artifactId>neo4j-lucene-index</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.neo4j</groupId>-->
+      <!--<artifactId>neo4j-graph-algo</artifactId>-->
+    <!--</dependency>-->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jta_1.1_spec</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.lucene</artifactId>
+      <version>3.0.3_2</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.raffael.util</groupId>
+      <artifactId>cru-beans</artifactId>
+      <version>1105-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.raffael.util</groupId>
+      <artifactId>cru-common</artifactId>
+      <version>1105-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.guava-osgi</groupId>
+      <artifactId>guava-osgi</artifactId>
+      <version>9.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ops4j.pax.logging</groupId>
+      <artifactId>pax-logging-api</artifactId>
+      <version>1.6.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.raffael.neobeans</groupId>
+      <artifactId>neobeans</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</project>
