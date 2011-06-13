@@ -137,6 +137,36 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
     }
 
     @Override
+    public <T> T retrieve(@NotNull T bean) {
+        BeanMapping mapping = getMapping(bean);
+        NodeKey key = mapping.getKey(bean);
+        doRetrieve(mapping, key, bean);
+        return bean;
+    }
+
+    @Override
+    public <T> T retrieve(@NotNull NodeKey key, @NotNull T bean) {
+        BeanMapping mapping = getMapping(bean);
+        doRetrieve(mapping, key, bean);
+        mapping.setKey(bean, key);
+        return bean;
+    }
+
+    private void doRetrieve(BeanMapping mapping, NodeKey key, Object bean) {
+        if ( key.getId() == null ) {
+            throw new IllegalArgumentException("Cannot retrieve bean with ID null");
+        }
+        Node node = database.getNodeById(key.getId());
+        if ( !node.getProperty(PROPERTY_KEY).equals(key.getKey()) ) {
+            throw new NotFoundException("Node for key " + key + " not found");
+        }
+        if ( !mapping.matchType(bean, node) ) {
+            throw new NotFoundException("Node for key " + key + " not found");
+        }
+        mapping.read(node, bean);
+    }
+
+    @Override
     public void store(@NotNull Object bean) {
         TxContext txctx = txContext();
         BeanMapping mapping = getMapping(bean);

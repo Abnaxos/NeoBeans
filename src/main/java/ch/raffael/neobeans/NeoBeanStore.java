@@ -22,6 +22,13 @@ public interface NeoBeanStore {
     @PreDestroy
     void shutdown();
 
+    <T> T retrieve(@NotNull T bean);
+
+    <T> T retrieve(@NotNull NodeKey key, @NotNull T bean);
+
+    // maybe add:
+    // Object retrieve(@NotNull NodeKey key);
+
     void store(@NotNull Object bean);
 
     boolean delete(@NotNull Object bean);

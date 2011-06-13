@@ -8,6 +8,7 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import ch.raffael.neobeans.BeanStoreException;
 import ch.raffael.neobeans.Converter;
+import ch.raffael.neobeans.NodeKey;
 
 
 /**
@@ -49,4 +50,42 @@ public class BeanPropertyMapping extends AbstractPropertyMapping {
             throw new BeanStoreException("Error reading value from " + bean, e);
         }
     }
+
+    public static class BeanPropertyKeyAdapter implements BeanMapping.KeyAdapter {
+
+        private final Method readMethod;
+        private final Method writeMethod;
+
+        public BeanPropertyKeyAdapter(Method readMethod, Method writeMethod) {
+            this.readMethod = readMethod;
+            this.writeMethod = writeMethod;
+        }
+
+        @Override
+        public NodeKey getKey(Object bean) {
+            try {
+                return (NodeKey)readMethod.invoke(bean);
+            }
+            catch ( IllegalAccessException e ) {
+                throw new BeanStoreException("Error reading value from " + bean, e);
+            }
+            catch ( InvocationTargetException e ) {
+                throw new BeanStoreException("Error reading value from " + bean, e);
+            }
+        }
+
+        @Override
+        public void setKey(Object bean, NodeKey key) {
+            try {
+                writeMethod.invoke(bean, key);
+            }
+            catch ( IllegalAccessException e ) {
+                throw new BeanStoreException("Error reading value from " + bean, e);
+            }
+            catch ( InvocationTargetException e ) {
+                throw new BeanStoreException("Error reading value from " + bean, e);
+            }
+        }
+    }
+
 }

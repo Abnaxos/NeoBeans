@@ -24,8 +24,7 @@ public class TestBasicCRUD extends Neo4jTest {
 
     @BeforeClass
     public void setupMapping() throws Exception {
-        BeanMapping mapping = new BeanMapping(true, TestBean.class, new BeanPropertyMapping(
-                beanStore.database(), NeoBeanStore.PROPERTY_KEY, null, null,
+        BeanMapping mapping = new BeanMapping(true, TestBean.class, new BeanPropertyMapping.BeanPropertyKeyAdapter(
                 TestBean.class.getMethod("getKey"), TestBean.class.getMethod("setKey", NodeKey.class)));
         mapping.addPropertyMapping(new BeanPropertyMapping(
                 beanStore.database(), "name", null, null,
@@ -224,6 +223,89 @@ public class TestBasicCRUD extends Neo4jTest {
         try {
             beanStore.database().getNodeById(bean.getKey().getId()); // should exist now
             assertTrue(beanStore.delete(bean), "Bean should have been deleted");
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+    }
+
+    @Test
+    public void testRead() throws Exception {
+        TestBean bean = new TestBean();
+        bean.setName("The name");
+        bean.setKey(NodeKey.create());
+        Transaction tx = beginTx();
+        try {
+            beanStore.store(bean);
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+        bean.setName("Wrong name");
+        tx = beginTx();
+        try {
+            beanStore.retrieve(bean);
+            assertEquals(bean.getName(), "The name", "Name mismatch");
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+    }
+
+    @Test
+    public void testReadNotByKey() throws Exception {
+        TestBean bean = new TestBean();
+        bean.setName("Another name");
+        bean.setKey(NodeKey.create());
+        Transaction tx = beginTx();
+        try {
+            beanStore.store(bean);
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+        bean.setKey(NodeKey.arbitrary(bean.getKey().getId(), UUID.randomUUID().toString()));
+        tx = beginTx();
+        try {
+            beanStore.database().getNodeById(bean.getKey().getId());
+            try {
+                beanStore.retrieve(bean);
+                fail("NotFoundException expected");
+            }
+            catch ( NotFoundException e ) {
+                // expected
+            }
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+    }
+
+    @Test
+    public void testReadWithKey() throws Exception {
+        TestBean bean = new TestBean();
+        bean.setName("Will use key");
+        bean.setKey(NodeKey.create());
+        Transaction tx = beginTx();
+        try {
+            beanStore.store(bean);
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+        bean.setName("Wrong name");
+        NodeKey key = bean.getKey();
+        bean.setKey(NodeKey.create());
+        tx = beginTx();
+        try {
+            beanStore.retrieve(key, bean);
+            assertEquals(bean.getName(), "Will use key", "Name mismatch");
             tx.success();
         }
         finally {

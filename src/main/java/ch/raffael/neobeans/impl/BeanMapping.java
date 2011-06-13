@@ -19,13 +19,13 @@ public class BeanMapping {
 
     private final Class<?> beanClass;
     private final boolean isNode;
-    private final AbstractPropertyMapping keyMapping;
+    private final KeyAdapter keyAdapter;
     private final Map<String, AbstractPropertyMapping> propertyMappings = new HashMap<String, AbstractPropertyMapping>();
 
-    public BeanMapping(boolean node, Class<?> beanClass, AbstractPropertyMapping keyMapping) {
+    public BeanMapping(boolean node, Class<?> beanClass, KeyAdapter keyAdapter) {
         isNode = node;
         this.beanClass = beanClass;
-        this.keyMapping = keyMapping;
+        this.keyAdapter = keyAdapter;
     }
 
     public void addPropertyMapping(AbstractPropertyMapping propertyMapping) {
@@ -50,12 +50,12 @@ public class BeanMapping {
 
     public NodeKey getKey(@NotNull Object bean) {
         Preconditions.checkState(isNode, "getKey() supported only by node mappings");
-        return (NodeKey)keyMapping.readBeanValue(bean); // FIXME: really read directly?
+        return keyAdapter.getKey(bean);
     }
 
     public void setKey(@NotNull Object bean, @NotNull NodeKey key) {
         Preconditions.checkState(isNode, "setKey() supported only by node mappings");
-        keyMapping.writeBeanValue(bean, key); // FIXME: really read directly?
+        keyAdapter.setKey(bean, key);
     }
 
     @NotNull
@@ -82,8 +82,7 @@ public class BeanMapping {
         }
     }
 
-    public void read(@NotNull Object bean, @NotNull PropertyContainer entity) {
-        keyMapping.entityToBean(entity, bean);
+    public void read(@NotNull PropertyContainer entity, @NotNull Object bean) {
         for ( AbstractPropertyMapping property : propertyMappings.values() ) {
             property.entityToBean(entity, bean);
         }
@@ -103,6 +102,11 @@ public class BeanMapping {
 
     public void afterRead(@NotNull Object bean, @NotNull PropertyContainer entity) {
         // FIXME: after-read actions (=> @AfterRead)
+    }
+
+    public static interface KeyAdapter {
+        NodeKey getKey(Object bean);
+        void setKey(Object bean, NodeKey key);
     }
 
 }
