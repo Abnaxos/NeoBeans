@@ -89,19 +89,19 @@ public class BeanMapping {
         }
     }
 
-    public void beforeCreate() {
+    public void beforeCreate(@NotNull Object bean) {
         // FIXME: before-create actions (=> @BeforeCreate)
     }
 
-    public void beforeUpdate(boolean creating) {
+    public void beforeUpdate(@NotNull Object bean, @NotNull PropertyContainer entity, boolean creating) {
         // FIXME: before-update actions (=> @BeforeUpdate)
     }
 
-    public void beforeDelete() {
+    public void beforeDelete(@NotNull Object bean, @NotNull PropertyContainer entity) {
         // FIXME: before-delete actions (=> @BeforeDelete)
     }
 
-    public void afterRead() {
+    public void afterRead(@NotNull Object bean, @NotNull PropertyContainer entity) {
         // FIXME: after-read actions (=> @AfterRead)
     }
 

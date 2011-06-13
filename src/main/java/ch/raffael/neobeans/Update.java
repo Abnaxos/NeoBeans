@@ -24,18 +24,13 @@ public class Update implements Iterable<Update.Operation> {
 
     @NotNull
     public Update store(@NotNull Object neoBean) {
-        return store(neoBean, false);
-    }
-
-    @NotNull
-    public Update store(@NotNull Object neoBean, boolean ignoreMissing) {
-        operations.add(new Operation(OperationType.STORE, neoBean, ignoreMissing));
+        operations.add(new Operation(OperationType.STORE, neoBean));
         return this;
     }
 
     @NotNull
     public Update delete(@NotNull Object neoBean) {
-        operations.add(new Operation(OperationType.DELETE, neoBean, true));
+        operations.add(new Operation(OperationType.DELETE, neoBean));
         return this;
     }
 
@@ -51,20 +46,15 @@ public class Update implements Iterable<Update.Operation> {
     public static final class Operation {
         private final OperationType type;
         private final Object neoBean;
-        private final boolean ignoreMissing;
-        private Operation(@NotNull OperationType type, @NotNull Object neoBean, boolean ignoreMissing) {
+        private Operation(@NotNull OperationType type, @NotNull Object neoBean) {
             this.type = type;
             this.neoBean = neoBean;
-            this.ignoreMissing = ignoreMissing;
         }
         public OperationType getType() {
             return type;
         }
         public Object getNeoBean() {
             return neoBean;
-        }
-        public boolean isIgnoreMissing() {
-            return ignoreMissing;
         }
     }
 

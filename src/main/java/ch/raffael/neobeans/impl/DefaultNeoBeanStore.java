@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.annotation.PreDestroy;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.NotFoundException;
@@ -35,9 +35,9 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
         this(database, new AnnotatedBeanMappingFactory());
     }
 
-    public DefaultNeoBeanStore(@NotNull GraphDatabaseService database, @NotNull AnnotatedBeanMappingFactory storageDelegateFactory) {
+    public DefaultNeoBeanStore(@NotNull GraphDatabaseService database, @NotNull BeanMappingFactory beanMappingFactory) {
         this.database = database;
-        this.beanMappingFactory = storageDelegateFactory;
+        this.beanMappingFactory = beanMappingFactory;
         database.registerTransactionEventHandler(new TransactionEventHandler<TxContext>() {
             @Override
             public TxContext beforeCommit(TransactionData data) throws Exception {
@@ -122,7 +122,7 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
             for ( Update.Operation operation : update ) {
                 switch ( operation.getType() ) {
                     case STORE:
-                        store(operation.getNeoBean(), operation.isIgnoreMissing());
+                        store(operation.getNeoBean());
                         break;
                     case DELETE:
                         delete(operation.getNeoBean());
@@ -138,11 +138,6 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
 
     @Override
     public void store(@NotNull Object bean) {
-        store(bean, false);
-    }
-
-    @Override
-    public void store(@NotNull Object bean, boolean ignoreMissing) {
         TxContext txctx = txContext();
         BeanMapping mapping = getMapping(bean);
         if ( mapping.isNode() ) {
@@ -150,7 +145,7 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
             if ( key.getId() == null ) {
                 NodeKey newKey = txctx.persistentKey(bean, key);
                 if ( newKey == null ) {
-                    mapping.beforeCreate();
+                    mapping.beforeCreate(bean);
                     Node node = database.createNode();
                     newKey = NodeKey.arbitrary(node.getId(), key.getKey());
                     txctx.registerCreatingBean(bean, key, newKey);
@@ -159,15 +154,15 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
                     node.setProperty(PROPERTY_KEY, key.getKey());
                     mapping.writeType(node);
                     mapping.created(bean, node);
-                    mapping.beforeUpdate(true);
+                    mapping.beforeUpdate(bean, node, true);
                     mapping.store(bean, node);
                 }
                 else {
-                    updateNode(bean, mapping, key, false);
+                    updateNode(bean, mapping, key);
                 }
             }
             else {
-                updateNode(bean, mapping, key, ignoreMissing);
+                updateNode(bean, mapping, key);
             }
         }
         else {
@@ -175,17 +170,15 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
         }
     }
 
-    private void updateNode(Object bean, BeanMapping mapping, NodeKey key, boolean ignoreMissing) {
+    private void updateNode(Object bean, BeanMapping mapping, NodeKey key) {
         Node node = database.getNodeById(key.getId());
         if ( !mapping.matchType(bean, node) ) {
-            notFound(key, ignoreMissing);
-            return;
+            throw new NotFoundException("Node with key " + key + " not found");
         }
         if ( !node.getProperty(PROPERTY_KEY).equals(key.getKey()) ) {
-            notFound(key, ignoreMissing);
-            return;
+            throw new NotFoundException("Node with key " + key + " not found");
         }
-        mapping.beforeUpdate(false);
+        mapping.beforeUpdate(bean, node, false);
         mapping.store(bean, node);
     }
 
@@ -194,13 +187,33 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
             return;
         }
         else {
-            throw new NotFoundException("Neo4j entity with key " + key + " not found");
         }
     }
 
     @Override
-    public void delete(@NotNull Object bean) {
-        notImplemented();
+    public boolean delete(@NotNull Object bean) {
+        TxContext txctx = txContext();
+        BeanMapping mapping = getMapping(bean);
+        NodeKey key = mapping.getKey(bean);
+        if ( key.getId() == null ) {
+            key = txctx.persistentKey(bean, key);
+            if ( key == null ) {
+            // won't delete bean that hasn't been stored
+            return false;
+            }
+        }
+        Node node = database.getNodeById(key.getId());
+        if ( !mapping.matchType(bean, node) ) {
+            return false;
+            //throw new NotFoundException("Node with key " + key + " not found");
+        }
+        if ( !node.getProperty(PROPERTY_KEY).equals(key.getKey()) ) {
+            return false;
+            //throw new NotFoundException("Node with key " + key + " not found");
+        }
+        mapping.beforeDelete(bean, node);
+        node.delete();
+        return true;
     }
 
     @NotNull
@@ -270,12 +283,12 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
         }
     }
 
-    @TestOnly
+    @VisibleForTesting
     void setMapping(Object key, BeanMapping mapping) {
         mappings.put(key, mapping);
     }
 
-    @TestOnly
+    @VisibleForTesting
     void removeMapping(Object key) {
         mappings.remove(key);
     }

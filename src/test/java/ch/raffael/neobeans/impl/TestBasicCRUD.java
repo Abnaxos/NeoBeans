@@ -1,6 +1,7 @@
 package ch.raffael.neobeans.impl;
 
 import java.net.URL;
+import java.util.UUID;
 
 import org.testng.annotations.*;
 
@@ -17,7 +18,7 @@ import static org.testng.Assert.*;
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
  */
-public class TestStore extends Neo4jTest {
+public class TestBasicCRUD extends Neo4jTest {
 
     private NodeKey foobarKey;
 
@@ -54,13 +55,14 @@ public class TestStore extends Neo4jTest {
             tx.finish();
         }
         assertNotNull(bean.getKey().getId(), "Node ID is null");
+        bean.setName("Temporary"); // should be re-read from DB
         foobarKey = bean.getKey();
         tx = beginTx();
         try {
             Node node = beanStore.database().getNodeById(bean.getKey().getId());
             assertEquals(node.getProperty(NeoBeanStore.PROPERTY_TYPE), TestBean.class.getName(), "Type mismatch");
             assertEquals(node.getProperty(NeoBeanStore.PROPERTY_KEY), bean.getKey().getKey(), "Key mismatch");
-            assertEquals(node.getProperty("name"), bean.getName(), "Name mismatch");
+            assertEquals(node.getProperty("name"), "FooBar", "Name mismatch");
             assertNull(node.getProperty("homepage", null), "Name mismatch");
             tx.success();
         }
@@ -126,4 +128,107 @@ public class TestStore extends Neo4jTest {
     }
 
     // FIXME: Not found by type
+
+    @Test
+    public void testDelete() throws Exception {
+        TestBean bean = new TestBean();
+        bean.setName("Delete Me");
+        bean.setKey(NodeKey.create());
+        Transaction tx = beginTx();
+        try {
+            beanStore.store(bean);
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+        tx = beginTx();
+        try {
+            assertTrue(beanStore.delete(bean), "Bean not deleted");
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+        tx = beginTx();
+        try {
+            try {
+                beanStore.database().getNodeById(bean.getKey().getId());
+                fail("Expected NotFoundException");
+            }
+            catch ( NotFoundException e ) {
+                // expected
+            }
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+    }
+
+    @Test
+    public void testDeleteNotFound() throws Exception {
+        TestBean bean = new TestBean();
+        bean.setName("Delete me again");
+        bean.setKey(NodeKey.create());
+        Transaction tx = beginTx();
+        try {
+            assertFalse(beanStore.delete(bean), "Bean should not have been deleted");
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+    }
+
+    @Test
+    public void testDeleteNotFoundByKey() throws Exception {
+        TestBean bean = new TestBean();
+        bean.setName("And more deletion");
+        bean.setKey(NodeKey.create());
+        Transaction tx = beginTx();
+        try {
+            beanStore.store(bean);
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+        bean.setKey(NodeKey.arbitrary(bean.getKey().getId(), UUID.randomUUID().toString()));
+        tx = beginTx();
+        try {
+            beanStore.database().getNodeById(bean.getKey().getId()); // check that the node exists
+            assertFalse(beanStore.delete(bean), "Bean should not have been deleted");
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+    }
+
+    @Test
+    public void testNotFoundBeforeStore() throws Exception {
+        TestBean bean = new TestBean();
+        bean.setKey(NodeKey.create());
+        bean.setName("Delete too early");
+        Transaction tx = beginTx();
+        try {
+            assertFalse(beanStore.delete(bean), "Bean should not have been deleted");
+            beanStore.store(bean);
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+        tx = beginTx();
+        try {
+            beanStore.database().getNodeById(bean.getKey().getId()); // should exist now
+            assertTrue(beanStore.delete(bean), "Bean should have been deleted");
+            tx.success();
+        }
+        finally {
+            tx.finish();
+        }
+    }
+
 }

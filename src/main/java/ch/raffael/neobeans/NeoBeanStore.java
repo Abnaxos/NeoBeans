@@ -24,9 +24,7 @@ public interface NeoBeanStore {
 
     void store(@NotNull Object bean);
 
-    void store(@NotNull Object bean, boolean ignoreMissing);
-
-    void delete(@NotNull Object bean);
+    boolean delete(@NotNull Object bean);
 
     void performUpdate(@NotNull Update update);
 
