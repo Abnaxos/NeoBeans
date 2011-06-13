@@ -4,4 +4,9 @@ Features
 * Some way to auto-detach certain relationships on node deletion. A good
   would be a category or tag relationship, which shouldn't prevent a node
   from being deleted. ("soft relationships")
-  
+
+
+Structure
+=========
+
+* Remove ch.raffael.util stuff
