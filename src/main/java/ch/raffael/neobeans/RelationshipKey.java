@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import static ch.raffael.util.common.NotImplementedException.*;
+import static ch.raffael.neobeans.temp.NotImplementedException.*;
 
 
 /**

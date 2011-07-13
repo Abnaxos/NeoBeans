@@ -76,11 +76,6 @@
       <version>r09</version>
     </dependency>
     <dependency>
-      <groupId>ch.raffael.util</groupId>
-      <artifactId>cru-common</artifactId>
-      <version>1105-SNAPSHOT</version>
-    </dependency>
-    <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
       <version>10.5</version>

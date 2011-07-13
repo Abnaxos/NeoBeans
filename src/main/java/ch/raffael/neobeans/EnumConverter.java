@@ -1,6 +1,6 @@
 package ch.raffael.neobeans;
 
-import static ch.raffael.util.common.NotImplementedException.*;
+import static ch.raffael.neobeans.temp.NotImplementedException.*;
 
 
 /**

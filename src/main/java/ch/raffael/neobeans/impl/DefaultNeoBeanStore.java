@@ -18,7 +18,7 @@ import ch.raffael.neobeans.NeoBeanStore;
 import ch.raffael.neobeans.NodeKey;
 import ch.raffael.neobeans.Update;
 
-import static ch.raffael.util.common.NotImplementedException.*;
+import static ch.raffael.neobeans.temp.NotImplementedException.*;
 
 
 /**

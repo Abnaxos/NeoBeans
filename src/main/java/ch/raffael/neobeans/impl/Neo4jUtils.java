@@ -2,8 +2,6 @@ package ch.raffael.neobeans.impl;
 
 import java.util.Arrays;
 
-import ch.raffael.util.common.UnreachableCodeException;
-
 
 /**
  * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
@@ -53,7 +51,7 @@ public class Neo4jUtils {
                     return Arrays.equals((float[])a, (float[])b);
                 }
                 else {
-                    throw new UnreachableCodeException();
+                    throw new RuntimeException("Unreachable code reached");
                 }
             }
             else if ( b.getClass().getComponentType().isPrimitive() ) {

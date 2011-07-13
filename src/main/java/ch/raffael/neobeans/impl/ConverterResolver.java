@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import ch.raffael.neobeans.Converter;
 import ch.raffael.neobeans.InvalidBeanException;
 
-import static ch.raffael.util.common.NotImplementedException.*;
+import static ch.raffael.neobeans.temp.NotImplementedException.*;
 
 
 /**
