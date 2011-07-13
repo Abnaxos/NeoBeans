@@ -262,7 +262,7 @@ public class DefaultNeoBeanStore implements NeoBeanStore {
             final Object mappingKey = beanMappingFactory.mappingKey(bean);
             BeanMapping mapping = mappings.get(mappingKey);
             if ( mapping == null ) {
-                mapping = beanMappingFactory.createBeanMapping(bean);
+                mapping = beanMappingFactory.createBeanMapping(database, bean);
                 mappings.put(mappingKey, mapping);
             }
             return mapping;

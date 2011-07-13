@@ -1,10 +1,7 @@
 package ch.raffael.neobeans.impl;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
-import ch.raffael.neobeans.ConvertException;
-import ch.raffael.neobeans.Converter;
 import ch.raffael.neobeans.NodeKey;
 
 
@@ -13,22 +10,6 @@ import ch.raffael.neobeans.NodeKey;
 */
 public class TestBean {
 
-    public static final Converter URL_CONVERTER = new Converter() {
-        @Override
-        public Object fromNeo4j(Object value) {
-            try {
-                return new URL((String)value);
-            }
-            catch ( MalformedURLException e ) {
-                throw new ConvertException(value, e);
-            }
-        }
-
-        @Override
-        public Object toNeo4j(Object value) {
-            return value.toString();
-        }
-    };
     private NodeKey key;
     private String name;
     private URL homepage;
@@ -56,4 +37,5 @@ public class TestBean {
     public void setHomepage(URL homepage) {
         this.homepage = homepage;
     }
+
 }

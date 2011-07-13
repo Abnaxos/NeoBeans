@@ -72,7 +72,7 @@ public class TestBeanPropertyMapping extends Neo4jTest {
     @Test
     public void testConverter() throws Exception {
         BeanPropertyMapping mapping = new BeanPropertyMapping(beanStore.database(), "homepage",
-                                                              TestBean.URL_CONVERTER, null,
+                                                              new UrlConverter(), null,
                                                               TestBean.class.getMethod("getHomepage"),
                                                               TestBean.class.getMethod("setHomepage", URL.class));
         TestBean bean = new TestBean();

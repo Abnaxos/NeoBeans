@@ -30,7 +30,7 @@ public class TestBasicCRUD extends Neo4jTest {
                 beanStore.database(), "name", null, null,
                 TestBean.class.getMethod("getName"), TestBean.class.getMethod("setName", String.class)));
         mapping.addPropertyMapping(new BeanPropertyMapping(
-                beanStore.database(), "homepage", TestBean.URL_CONVERTER, null,
+                beanStore.database(), "homepage", new UrlConverter(), null,
                 TestBean.class.getMethod("getHomepage"), TestBean.class.getMethod("setHomepage", URL.class)));
         beanStore.setMapping(TestBean.class, mapping);
     }

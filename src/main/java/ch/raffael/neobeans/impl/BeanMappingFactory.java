@@ -1,6 +1,7 @@
 package ch.raffael.neobeans.impl;
 
 import org.jetbrains.annotations.NotNull;
+import org.neo4j.graphdb.GraphDatabaseService;
 
 
 /**
@@ -12,6 +13,6 @@ public interface BeanMappingFactory {
     Object mappingKey(@NotNull Object bean);
 
     @NotNull
-    BeanMapping createBeanMapping(@NotNull Object bean);
+    BeanMapping createBeanMapping(@NotNull GraphDatabaseService database, @NotNull Object bean);
 
 }
