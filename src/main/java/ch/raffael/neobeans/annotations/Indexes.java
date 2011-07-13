@@ -13,14 +13,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Index {
+public @interface Indexes {
 
-    String key() default "";
-
-    String name() default "";
-
-    String provider() default "lucene";
-
-    String[] properties() default {};
+    Index[] value();
 
 }
